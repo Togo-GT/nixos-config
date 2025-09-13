@@ -1,4 +1,4 @@
-{pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 
 {
   # Home Manager configuration
@@ -53,7 +53,7 @@
     # ----------------------------
     programs.zsh = {
       enable = true;
-      initContent = ''
+      initExtra = ''
         # Editor - nano som standard
         export EDITOR=nano
         export VISUAL=nano
@@ -160,6 +160,24 @@
       fi
     '';
 
+    # ----------------------------
+    # VSCode Configuration (FIXED - removed profiles)
+    # ----------------------------
+    programs.vscode = {
+      enable = true;
+      package = pkgs.vscodium;
+      extensions = with pkgs.vscode-extensions; [
+        ms-python.python
+        eamodio.gitlens
+        vscodevim.vim
+        ms-toolsai.jupyter
+      ];
+      userSettings = {
+        "editor.fontSize" = 14;
+        "window.zoomLevel" = 1;
+        "git.useForcePushWithLease" = true;
+      };
+    };
 
     # ----------------------------
     # Terminal emulator
