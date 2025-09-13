@@ -144,9 +144,9 @@
     };
 
     # ----------------------------
-    # Generate SSH key if it doesn't exist
+    # Generate SSH key if it doesn't exist - FIXED
     # ----------------------------
-    home.activation.setupSSHKey = lib.dag.entryAfter ["writeBoundary"] ''
+    home.activation.setupSSHKey = lib.hm.dag.entryAfter ["writeBoundary"] ''
       SSH_KEY="/home/gt/.ssh/id_ed25519"
       if [ ! -f "$SSH_KEY" ]; then
         echo "Generating SSH key for GitHub..."
