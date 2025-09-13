@@ -1,3 +1,6 @@
+{pkgs, ... }:
+
+{
 # ----------------------------
 # VSCode Configuration (UPDATED)
 # ----------------------------
@@ -17,3 +20,4 @@ programs.vscode = {
     "git.useForcePushWithLease" = true;
   };
 };
+}
