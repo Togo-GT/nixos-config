@@ -13,7 +13,6 @@
   outputs = { self, nixpkgs, home-manager, agenix, ... }@inputs:
   let
     system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
 
     # Common modules shared across all systems
     commonModules = [

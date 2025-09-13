@@ -1,4 +1,4 @@
-{ config, ... }:
+{  ... }:
 {
   # ... existing configuration
   custom = {
@@ -6,3 +6,4 @@
     greeting = "Welcome to NixOS Laptop!";
   };
 }
+

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 ┌─────────────────────────────┐
 │       nixos-rebuild         │
@@ -54,6 +53,7 @@ nix-store --verify --check-contents
 =======
 
 ┌─────────────────────────────┐
+│       
 │       nixos-rebuild         │
 └─────────────────────────────┘
 
@@ -104,4 +104,3 @@ sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
 nix-store --verify --check-contents
 
 #GT-nixos-btw
->>>>>>> 994ac77713c1e5c50c5b502a29b7e5f9d39f1f29
