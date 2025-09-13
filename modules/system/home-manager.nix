@@ -1,7 +1,6 @@
 { pkgs, lib, ... }:
 
 {
-  # Home Manager configuration
   home-manager.users.gt = {
     home.username = "gt";
     home.homeDirectory = "/home/gt";
@@ -11,20 +10,11 @@
     # CLI Packages
     # ----------------------------
     home.packages = with pkgs; [
-      # Dev tools
       delta lazygit curl ripgrep fzf fd bat jq
-
-      # System monitoring
       htop bottom duf ncdu tree neofetch
-
-      # Disk utilities
       gparted e2fsprogs
-
-      # Shell enhancements
       autojump zsh-autosuggestions zsh-syntax-highlighting
       zoxide eza tldr
-
-      # Editors
       nano
     ];
 
@@ -51,30 +41,24 @@
       };
 
       initExtra = ''
-        # Editor - nano som standard
         export EDITOR=nano
         export VISUAL=nano
 
-        # Bedre navigation
         eval "$(zoxide init zsh)"
         alias ls="eza --icons --group-directories-first"
         alias l="eza --icons --group-directories-first -l"
         alias la="eza --icons --group-directories-first -la"
 
-        # Load plugins from Nix
         source ${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
         source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
         source ${pkgs.autojump}/share/autojump/autojump.zsh
 
-        # Start SSH agent if not running
         if [ -z "$SSH_AUTH_SOCK" ]; then
           eval "$(ssh-agent -s)" > /dev/null
         fi
 
-        # Add SSH key if not already added
         ssh-add -l > /dev/null || ssh-add ~/.ssh/id_ed25519 2>/dev/null
 
-        # Git Power Dashboard
         function git_power_dashboard() {
           local branch=$(git symbolic-ref --short HEAD 2>/dev/null)
           if [[ -n $branch ]]; then
@@ -96,7 +80,6 @@
           fi
         }
 
-        # Powerlevel10k prompt hvis installeret
         if [[ -f ~/.p10k.zsh ]]; then
           source ~/.p10k.zsh
           typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status time background_jobs git_power_dashboard)
@@ -114,7 +97,6 @@
         ServerAliveInterval 60
         AddKeysToAgent yes
       '';
-
       matchBlocks = {
         "github.com" = {
           user = "git";
@@ -144,18 +126,31 @@
     };
 
     # ----------------------------
-    # Generate SSH key if it doesn't exist - FIXED
+    # Systemd service for SSH key setup
     # ----------------------------
-    home.activation.setupSSHKey = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      SSH_KEY="/home/gt/.ssh/id_ed25519"
-      if [ ! -f "$SSH_KEY" ]; then
-        echo "Generating SSH key for GitHub..."
-        ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -C "michael.kaare.nielsen@gmail.com" -f "$SSH_KEY" -N ""
-        echo "SSH key generated at $SSH_KEY.pub"
-        echo "Please add this key to your GitHub account:"
-        cat "$SSH_KEY.pub"
-      fi
-    '';
+    systemd.user.services.setup-ssh-key = {
+      Unit = {
+        Description = "Generate SSH key if missing";
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${pkgs.bash}/bin/bash -c '
+            SSH_KEY="$HOME/.ssh/id_ed25519"
+            if [ ! -f "$SSH_KEY" ]; then
+              echo "Generating SSH key for GitHub..."
+              ${pkgs.openssh}/bin/ssh-keygen -t ed25519 -C "michael.kaare.nielsen@gmail.com" -f "$SSH_KEY" -N ""
+              echo "SSH key generated at $SSH_KEY.pub"
+              echo "Please add this key to your GitHub account:"
+              cat "$SSH_KEY.pub"
+            fi
+          '
+        '';
+      };
+      Install = {
+        WantedBy = [ "default.target" ];
+      };
+    };
 
     # ----------------------------
     # VSCode Configuration
@@ -183,36 +178,16 @@
       enable = true;
       settings = {
         window = {
-          padding = {
-            x = 8;
-            y = 8;
-          };
+          padding = { x = 8; y = 8; };
           dynamic_title = true;
         };
-        font = {
-          normal = {
-            family = "Monospace";
-            size = 12.0;
-          };
-        };
-        scrolling = {
-          history = 20000;
-          multiplier = 3;
-        };
-        cursor = {
-          style = "Block";
-          blink = true;
-        };
+        font = { normal = { family = "Monospace"; size = 12.0; }; };
+        scrolling = { history = 20000; multiplier = 3; };
+        cursor = { style = "Block"; blink = true; };
         live_config_reload = true;
         colors = {
-          primary = {
-            background = "0x1d1f21";
-            foreground = "0xc5c8c6";
-          };
-          cursor = {
-            text = "0x1d1f21";
-            cursor = "0xc5c8c6";
-          };
+          primary = { background = "0x1d1f21"; foreground = "0xc5c8c6"; };
+          cursor = { text = "0x1d1f21"; cursor = "0xc5c8c6"; };
         };
       };
     };
