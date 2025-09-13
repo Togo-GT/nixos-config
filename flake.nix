@@ -27,13 +27,19 @@
       # Import overlays
       # overlays = import ./overlays;
 
+      # Common special args for all configurations
+      commonSpecialArgs = {
+        inherit inputs helpers;
+        flakeRoot = self.outPath; # Add flake root path
+      };
+
     in {
       # NixOS configurations
       nixosConfigurations = {
         # Laptop configurations
         "lenovo-i7" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs helpers; };
+          specialArgs = commonSpecialArgs;
           modules = [
             ./hosts/laptop/lenovo-i7/configuration.nix
             ./hosts/laptop/lenovo-i7/hardware-configuration.nix
@@ -48,7 +54,7 @@
 
         "nixos-btw" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs helpers; };
+          specialArgs = commonSpecialArgs;
           modules = [
             ./hosts/laptop/nixos-btw/configuration.nix
             ./hosts/laptop/nixos-btw/hardware-configuration.nix
@@ -64,7 +70,7 @@
         # Server configuration
         server = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs helpers; };
+          specialArgs = commonSpecialArgs;
           modules = [
             ./hosts/server/default.nix
             ./hosts/server/hardware-configuration.nix
