@@ -1,49 +1,69 @@
-nixos-config/
-├── flake.nix
+[gt@nixos-btw:~/nixos-config]$ tree
+.
 ├── flake.lock
-├── hosts/
-│   ├── nixos-btw/              # Dit hostnavn
-│   │   ├── default.nix         # Hovedhostkonfiguration
-│   │   ├── hardware-configuration.nix
-│   │   └── user-gt.nix         # Bruger-specifik konfiguration
-│   └── server/
-│       ├── default.nix
-│       └── hardware-configuration.nix
-├── modules/
-│   ├── system/
-│   │   ├── audio.nix           # Flyt audio config hertil
-│   │   ├── boot.nix            # Boot-indstillinger
-│   │   ├── networking.nix      # Netværkskonfiguration
-│   │   └── locale.nix          # Sprog og regionindstillinger
-│   ├── desktop/
-│   │   ├── plasma.nix          # KDE Plasma konfiguration
-│   │   ├── xserver.nix         # X-server konfiguration
-│   │   └── display-manager.nix # SDDM konfiguration
-│   └── security/
-│       ├── firewall.nix        # Firewall-regler
-│       ├── ssh.nix             # SSH-konfiguration
-│       └── sudo.nix            # Sudo-indstillinger
-├── profiles/
-│   ├── base.nix                # Basis-pakker og konfiguration
-│   ├── desktop.nix             # Desktop-specifik konfiguration
-│   └── development.nix
-├── overlays/
-│   ├── custom-packages.nix
-│   └── default.nix
-├── secrets/
-│   ├── age.nix
-│   ├── keys/
-│   └── secrets.nix
-├── packages/
-│   └── custom-software/
-│       └── default.nix
-├── lib/
-│   └── helpers.nix
-├── users/
-│   ├── default.nix
-│   ├── home-manager.nix
-│   └── gt/                      # Brugeren gt
-│       ├── default.nix          # Systemkonfiguration for gt
-│       └── home.nix             # Home Manager konfiguration
-├── .editorconfig
-└── README.md
+├── flake.nix
+├── hosts
+│   ├── laptop
+│   │   ├── lenovo-i7
+│   │   │   ├── configuration.nix
+│   │   │   ├── default.nix
+│   │   │   └── hardware-configuration.nix
+│   │   └── nixos-btw
+│   │       ├── configuration.nix
+│   │       ├── default.nix
+│   │       └── hardware-configuration.nix
+│   └── server
+│       ├── default.nix
+│       └── hardware-configuration.nix
+├── lib
+│   └── helpers.nix
+├── modules
+│   ├── brawoser
+│   │   └── firefox.nix
+│   ├── browser
+│   ├── desktop
+│   │   ├── display-manager.nix
+│   │   ├── plasma.nix
+│   │   └── xserver.nix
+│   ├── hardware
+│   │   ├── audio.nix
+│   │   ├── bluetooth.nix
+│   │   ├── printers.nix
+│   │   └── sensors.nix
+│   ├── security
+│   │   ├── firewall.nix
+│   │   ├── ssh.nix
+│   │   └── sudo.nix
+│   └── system
+│       ├── audio.nix
+│       ├── boot.nix
+│       ├── default.nix
+│       ├── locale.nix
+│       ├── networking.nix
+│       ├── stateversion.nix
+│       └── video.nix
+├── overlays
+│   ├── custom-packages.nix
+│   └── default.nix
+├── packages
+│   └── custom-software
+│       └── default.nix
+├── profiles
+│   ├── base.nix
+│   ├── desktop.nix
+│   └── development.nix
+├── README.md
+├── secrets
+│   ├── age.nix
+│   ├── keys
+│   │   └── key.nix
+│   └── secrets.nix
+├── tree.info
+└── users
+    ├── default.nix
+    ├── gt
+    │   ├── gt.nix
+    │   └── home.nix
+    └── home-manager.nix
+
+22 directories, 44 files

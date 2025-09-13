@@ -1,57 +1,92 @@
 {
-  description = "NixOS configuration with multiple hosts";
+  description = "NixOS configuration with multiple machines";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    # Optional: Add home-manager if you're using it
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    agenix.url = "github:ryantm/agenix";
+
+    # Add other inputs you might need
   };
 
-  outputs = { self, nixpkgs, home-manager, agenix, ... }@inputs:
-  let
-    system = "x86_64-linux";
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+    let
+      # System types to support
+      supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
 
-    # Common modules shared across all systems
-    commonModules = [
-      agenix.nixosModules.default
-      ./modules/system
-      ./modules/hardware
-      ./profiles/base.nix
-      ./users/default.nix
-    ];
-  in {
-    nixosConfigurations = {
-      laptop = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = commonModules ++ [
-          ./hosts/laptop/hardware-configuration.nix
-          ./hosts/laptop/default.nix
-          ./profiles/desktop.nix
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              useGlobalPkgs = true;
-              useUserPackages = true;
-              users.user1 = import ./users/user1/home.nix;
-              extraSpecialArgs = { inherit inputs; };
-            };
-          }
-        ];
-        specialArgs = { inherit inputs; };
+      # Helper function to generate systems
+      forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+
+      # Import custom lib functions
+      helpers = import ./lib/helpers.nix;
+
+      # Import overlays
+      # overlays = import ./overlays;
+
+    in {
+      # NixOS configurations
+      nixosConfigurations = {
+        # Laptop configurations
+        "lenovo-i7" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs helpers; };
+          modules = [
+            ./hosts/laptop/lenovo-i7/configuration.nix
+            ./hosts/laptop/lenovo-i7/hardware-configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.gt = import ./users/gt/home.nix;
+            }
+          ];
+        };
+
+        "nixos-btw" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs helpers; };
+          modules = [
+            ./hosts/laptop/nixos-btw/configuration.nix
+            ./hosts/laptop/nixos-btw/hardware-configuration.nix
+            home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.gt = import ./users/gt/home.nix;
+            }
+          ];
+        };
+
+        # Server configuration
+        server = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs helpers; };
+          modules = [
+            ./hosts/server/default.nix
+            ./hosts/server/hardware-configuration.nix
+          ];
+        };
       };
 
-      server = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = commonModules ++ [
-          ./hosts/server/hardware-configuration.nix
-          ./hosts/server/default.nix
-          ./profiles/development.nix
-        ];
-        specialArgs = { inherit inputs; };
-      };
+      # Development shell (optional)
+      devShells = forAllSystems (system:
+        let pkgs = nixpkgs.legacyPackages.${system};
+        in {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              nixpkgs-fmt
+              statix
+              deadnix
+            ];
+          };
+        }
+      );
+
+      # Formatter for your nix code (optional)
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
-  };
 }
