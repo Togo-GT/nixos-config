@@ -6,4 +6,4 @@
     greeting = "Welcome to NixOS Laptop!";
   };
 }
-gggmhg
+
