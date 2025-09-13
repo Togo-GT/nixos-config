@@ -160,26 +160,6 @@
       fi
     '';
 
-    # ----------------------------
-    # VSCode Configuration
-    # ----------------------------
-    programs.vscode = {
-      enable = true;
-      package = pkgs.vscodium;
-      profiles.default = {
-        userSettings = {
-          "editor.fontSize" = 14;
-          "window.zoomLevel" = 1;
-          "git.useForcePushWithLease" = true;
-        };
-        extensions = [
-          pkgs.vscode-extensions.ms-python.python
-          pkgs.vscode-extensions.eamodio.gitlens
-          pkgs.vscode-extensions.vscodevim.vim
-          pkgs.vscode-extensions.ms-toolsai.jupyter
-        ];
-      };
-    };
 
     # ----------------------------
     # Terminal emulator
