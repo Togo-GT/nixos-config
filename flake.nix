@@ -4,9 +4,9 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    # Optional: Add home-manager if you're using it
+    # Home Manager
     home-manager = {
-      url = "github:nix-community/home-manager";
+      url = "github:nix-community/home-manager/release-23.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -24,13 +24,13 @@
       # Import custom lib functions
       helpers = import ./lib/helpers.nix;
 
-      # Import overlays (uncommented and fixed)
+      # Import overlays
       overlays = import ./overlays;
 
       # Common special args for all configurations
       commonSpecialArgs = {
         inherit inputs helpers overlays;
-        flakeRoot = self.outPath; # Add flake root path
+        flakeRoot = self.outPath;
       };
 
     in {
@@ -58,11 +58,13 @@
           modules = [
             ./hosts/laptop/nixos-btw/configuration.nix
             ./hosts/laptop/nixos-btw/hardware-configuration.nix
+            ./modules/system/stateversion.nix
+            ./modules/system/home-manager.nix  # Add the Home Manager module
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.gt = import ./users/gt/home.nix;
+              # Remove the direct user import since it's now in the module
             }
           ];
         };
