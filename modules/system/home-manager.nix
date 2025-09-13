@@ -8,26 +8,6 @@
     home.stateVersion = "23.11";
 
     # ----------------------------
-    # Shell aliases
-    # ----------------------------
-    programs.zsh.shellAliases = {
-      ll    = "ls -la";
-      gs    = "git status";
-      co    = "git checkout";
-      br    = "git branch";
-      cm    = "git commit";
-      lg    = "git log --oneline --graph --decorate --all";
-      nixup = "sudo nixos-rebuild switch --upgrade --flake /home/gt/nixos-config#nixos-btw";
-      fz    = "fzf";
-      rg    = "ripgrep";
-      htop  = "htop";
-      tree  = "tree";
-      duf   = "duf";
-      bottom = "btm";
-      add   = "git add .";
-    };
-
-    # ----------------------------
     # CLI Packages
     # ----------------------------
     home.packages = with pkgs; [
@@ -49,10 +29,27 @@
     ];
 
     # ----------------------------
-    # Zsh Configuration (Primary Shell)
+    # Shell aliases
     # ----------------------------
     programs.zsh = {
       enable = true;
+      shellAliases = {
+        ll    = "ls -la";
+        gs    = "git status";
+        co    = "git checkout";
+        br    = "git branch";
+        cm    = "git commit";
+        lg    = "git log --oneline --graph --decorate --all";
+        nixup = "sudo nixos-rebuild switch --upgrade --flake /home/gt/nixos-config#nixos-btw";
+        fz    = "fzf";
+        rg    = "ripgrep";
+        htop  = "htop";
+        tree  = "tree";
+        duf   = "duf";
+        bottom = "btm";
+        add   = "git add .";
+      };
+
       initExtra = ''
         # Editor - nano som standard
         export EDITOR=nano
@@ -149,7 +146,7 @@
     # ----------------------------
     # Generate SSH key if it doesn't exist
     # ----------------------------
-    home.activation.setupSSHKey = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    home.activation.setupSSHKey = lib.dag.entryAfter ["writeBoundary"] ''
       SSH_KEY="/home/gt/.ssh/id_ed25519"
       if [ ! -f "$SSH_KEY" ]; then
         echo "Generating SSH key for GitHub..."
@@ -161,7 +158,7 @@
     '';
 
     # ----------------------------
-    # VSCode Configuration (FIXED - removed profiles)
+    # VSCode Configuration
     # ----------------------------
     programs.vscode = {
       enable = true;
@@ -182,32 +179,43 @@
     # ----------------------------
     # Terminal emulator
     # ----------------------------
-    programs.alacritty.enable = true;
-    home.file.".config/alacritty/alacritty.yml".text = ''
-      window:
-        padding:
-          x: 8
-          y: 8
-        dynamic_title: true
-      font:
-        normal:
-          family: "Monospace"
-          size: 12.0
-      scrolling:
-        history: 20000
-        multiplier: 3
-      cursor:
-        style: Block
-        blink: true
-      live_config_reload: true
-      colors:
-        primary:
-          background: '0x1d1f21'
-          foreground: '0xc5c8c6'
-        cursor:
-          text: '0x1d1f21'
-          cursor: '0xc5c8c6'
-    '';
+    programs.alacritty = {
+      enable = true;
+      settings = {
+        window = {
+          padding = {
+            x = 8;
+            y = 8;
+          };
+          dynamic_title = true;
+        };
+        font = {
+          normal = {
+            family = "Monospace";
+            size = 12.0;
+          };
+        };
+        scrolling = {
+          history = 20000;
+          multiplier = 3;
+        };
+        cursor = {
+          style = "Block";
+          blink = true;
+        };
+        live_config_reload = true;
+        colors = {
+          primary = {
+            background = "0x1d1f21";
+            foreground = "0xc5c8c6";
+          };
+          cursor = {
+            text = "0x1d1f21";
+            cursor = "0xc5c8c6";
+          };
+        };
+      };
+    };
 
     # ----------------------------
     # Tmux Configuration
