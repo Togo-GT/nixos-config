@@ -1,4 +1,4 @@
-{ flakeRoot, ... }:
+{flakeRoot, ... }:
 
 {
   imports = [
@@ -15,7 +15,7 @@
     (import (flakeRoot + "/modules/security/firewall.nix"))
     (import (flakeRoot + "/profiles/base.nix"))
     (import (flakeRoot + "/profiles/desktop.nix"))
-    (import (flakeRoot + "/users/gt/gt.nix"))  # Changed from default.nix to gt.nix
-    (import (flakeRoot + "/modules/system/stateversion.nix"))  # Fixed this path
+    (import (flakeRoot + "/users/gt/gt.nix"))
+    (import (flakeRoot + "/modules/system/stateversion.nix"))
   ];
 }

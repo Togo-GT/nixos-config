@@ -1,16 +1,6 @@
 { pkgs, ... }:
 
 {
-  environment.systemPackages = with pkgs; [
-    vim
-    wget
-    curl
-    git
-  ];
-}
-
-
-{
   imports = [
     ../modules/system/locale.nix
     ../modules/system/networking.nix
@@ -31,14 +21,16 @@
     settings.experimental-features = [ "nix-command" "flakes" ];
   };
 
-  # Firewall (part of networking module? or security? We'll create a separate module for firewall)
+  # Firewall
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
   networking.firewall.allowedUDPPorts = [ 53 ];
 
-  # Some base packages
+  # System packages
   environment.systemPackages = with pkgs; [
+    vim
     wget
     curl
+    git
     htop
     neofetch
     tree

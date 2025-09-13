@@ -24,12 +24,12 @@
       # Import custom lib functions
       helpers = import ./lib/helpers.nix;
 
-      # Import overlays
-      # overlays = import ./overlays;
+      # Import overlays (uncommented and fixed)
+      overlays = import ./overlays;
 
       # Common special args for all configurations
       commonSpecialArgs = {
-        inherit inputs helpers;
+        inherit inputs helpers overlays;
         flakeRoot = self.outPath; # Add flake root path
       };
 
