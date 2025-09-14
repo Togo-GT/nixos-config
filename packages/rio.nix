@@ -17,7 +17,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    home.file.".config/rio/config.toml".text = ''
+    home.files.".config/rio/config.toml".text = ''
       ${lib.concatMapStringsSep "\n" (name: "${name} = \"${toString cfg.settings.${name}}\"") (builtins.attrNames cfg.settings)}
     '';
   };
