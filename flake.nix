@@ -24,13 +24,13 @@
       # Import custom lib functions
       helpers = import ./lib/helpers.nix;
 
-      # Import overlays
-      overlays = import ./overlays;
+      # Import overlays from default.nix file
+      overlays = import ./overlays/default.nix;
 
       # Common special args for all configurations
       commonSpecialArgs = {
         inherit inputs helpers overlays;
-        flakeRoot = self.outPath;
+        # Fjern flakeRoot - det forårsager problemer
       };
 
     in {
@@ -59,12 +59,11 @@
             ./hosts/laptop/nixos-btw/configuration.nix
             ./hosts/laptop/nixos-btw/hardware-configuration.nix
             ./modules/system/stateversion.nix
-            ./modules/system/home-manager.nix  # Add the Home Manager module
             home-manager.nixosModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              # Remove the direct user import since it's now in the module
+              home-manager.users.gt = import ./users/gt/gt.nix;
             }
           ];
         };
