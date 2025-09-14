@@ -53,7 +53,7 @@ in
   home.packages = cliPackages;
 
   imports = [
-    ../../modules/home/rio.nix
+    ../../../modules/home/rio.nix
   ];
 
   programs.rio = {
