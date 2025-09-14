@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 
 {
   home-manager.users.gt = {
@@ -134,6 +134,7 @@
       };
       Service = {
         Type = "oneshot";
+        Restart = "no";
         ExecStart = ''
           ${pkgs.bash}/bin/bash -c '
             SSH_KEY="$HOME/.ssh/id_ed25519"
