@@ -1,38 +1,26 @@
-{ config, ... }:
-{
-  programs.rio = {
-    enable = true;
-    settings = {
-      # Skrifttype og størrelse
-      font-family = "MesloLGS NF";
-      font-size = 14.0;
+{ config, lib, pkgs, ... }:
 
-      # Farvetema (Rio's indbyggede temaer: carbon, moon, dawn, daylight, dusk)
-      color-palette = "carbon";
+with lib;
 
-      # Terminalindstillinger
-      blink-cursor = true;
-      bold-formatting = true;
-      working-directory = "/home/"+config.home.username+"/";
-      disable-unfocused-render = false;
-
-      # Padding og layout
-      padding-x = 10.0;
-      padding-y = 10.0;
-
-      # Scroll back linjer
-      scrollback-lines = 10000;
-
-      # Performance optimeringer
-      render-throttle = 5;
-      use-thin-strokes = true;
-
-      # Bell-lyd
-      bell-audio = "/usr/share/sounds/freedesktop/stereo/dialog-information.oga";
-      bell-animation = "EaseOutExpo";
-
-      # Musestøtte
-      mouse-hide-while-typing = true;
+let
+  cfg = config.programs.rio;
+in {
+  options.programs.rio = {
+    enable = mkEnableOption "Enable Rio terminal emulator";
+    settings = mkOption {
+      type = types.attrsOf types.str;
+      default = {};
+      description = "Configuration options for Rio terminal emulator";
     };
+  };
+
+  config = mkIf cfg.enable {
+    # Installer Rio
+    home.packages = [ pkgs.rio ];
+
+    # Skriv settings til config fil
+    xdg.configFile."rio/config.toml".text = ''
+      ${builtins.concatMapStringsSep "\n" (name: value: "${name} = \"${value}\"") (builtins.attrNames cfg.settings | map (name: { inherit name; value = cfg.settings.${name}; })) }
+    '';
   };
 }

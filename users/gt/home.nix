@@ -52,6 +52,28 @@ in
   # ----------------------------
   home.packages = cliPackages;
 
+  imports = [
+    ../../modules/home/rio.nix
+  ];
+
+  programs.rio = {
+    enable = true;
+    settings = {
+      font-family = "MesloLGS NF";
+      font-size = "14.0";
+      color-palette = "carbon";
+      working-directory = "/home/gt";
+      blink-cursor = "true";
+      bold-formatting = "true";
+      scrollback-lines = "10000";
+      padding-x = "10.0";
+      padding-y = "10.0";
+      bell-audio = "/usr/share/sounds/freedesktop/stereo/dialog-information.oga";
+      bell-animation = "EaseOutExpo";
+      mouse-hide-while-typing = "true";
+    };
+  };
+
   # ----------------------------
   # Zsh Configuration (Primary Shell)
   # ----------------------------
