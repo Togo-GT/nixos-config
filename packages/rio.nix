@@ -1,18 +1,16 @@
 { config, pkgs, lib, ... }:
 
 let
-  # Tjek om Home Manager og rio er aktivt
-  hasRio = config ? home && config.home ? rio;
+  # Hvis Home Manager og rio findes, brug settings derfra; ellers tomt objekt
+  cfg = if config ? home && config.home ? rio then config.home.rio else { settings = {}; };
 
-  cfg = if hasRio then config.home.rio else { settings = {}; };
-
+  # Funktion til at generere én TOML-linje pr. indstilling
   renderSetting = name: "${name} = \"${toString cfg.settings.${name}}\"";
 
+  # Kombiner alle linjer til én streng
   renderSettings = builtins.concatStringsSep "\n" (map renderSetting (builtins.attrNames cfg.settings));
 in
 {
-  # Generer kun config.toml hvis Home Manager og rio findes
-  home.file.".config/rio/config.toml".text = if hasRio then ''
-    ${renderSettings}
-  '' else null;
+  # Opret fil i /etc (virker både med og uden Home Manager)
+  environment.etc."rio/config.toml".text = renderSettings;
 }
