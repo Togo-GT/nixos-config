@@ -15,6 +15,7 @@
     (import (flakeRoot + "/modules/security/firewall.nix"))
     (import (flakeRoot + "/profiles/base.nix"))
     (import (flakeRoot + "/profiles/desktop.nix"))
+    (import (flakeRoot + "modules/system/rio.nix"))
     (import (flakeRoot + "/users/gt/gt.nix"))
     (import (flakeRoot + "/modules/system/stateversion.nix"))
   ];
