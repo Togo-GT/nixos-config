@@ -1,13 +1,24 @@
 { config, pkgs, lib, ... }:
 
 let
-  cfg = config.home.rio;
+  cfg = config.home.rio; # OK nu, fordi Home Manager modul
+in {
+  options.home.rio = {
+    enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable Rio terminal";
+    };
+    settings = lib.mkOption {
+      type = lib.types.attrsOf lib.types.any;
+      default = {};
+      description = "Rio settings";
+    };
+  };
 
-  renderSetting = name: "${name} = \"${toString cfg.settings.${name}}\"";
-  renderSettings = builtins.concatStringsSep "\n" (map renderSetting (builtins.attrNames cfg.settings));
-in
-{
-  home.file.".config/rio/config.toml".text = ''
-    ${renderSettings}
-  '';
+  config = lib.mkIf cfg.enable {
+    home.file.".config/rio/config.toml".text = ''
+      ${lib.concatMapStringsSep "\n" (name: "${name} = \"${toString cfg.settings.${name}}\"") (builtins.attrNames cfg.settings)}
+    '';
+  };
 }
