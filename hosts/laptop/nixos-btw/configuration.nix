@@ -15,7 +15,7 @@
     ../../../modules/security/firewall.nix
     ../../../profiles/base.nix
     ../../../profiles/desktop.nix
-    ../../../modules/system/rio.nix
+    ../../../packages/rio.nix
     ../../../users/gt/gt.nix
     ../../../modules/system/stateversion.nix
   ];
