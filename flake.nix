@@ -10,33 +10,29 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Add other inputs you might need
+    # Tilføj evt. flere inputs her
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      # System types to support
+      # System typer vi understøtter
       supportedSystems = [ "x86_64-linux" "aarch64-linux" ];
-
-      # Helper function to generate systems
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
 
       # Import custom lib functions
       helpers = import ./lib/helpers.nix;
 
-      # Import overlays from default.nix file
+      # Import overlays fra default.nix
       overlays = import ./overlays/default.nix;
 
-      # Common special args for all configurations
+      # Common special args (uden flakeRoot)
       commonSpecialArgs = {
         inherit inputs helpers overlays;
-        # Fjern flakeRoot - det forårsager problemer
       };
-
     in {
-      # NixOS configurations
+      # NixOS configs
       nixosConfigurations = {
-        # Laptop configurations
+        # Lenovo host
         "lenovo-i7" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = commonSpecialArgs;
@@ -52,6 +48,7 @@
           ];
         };
 
+        # nixos-btw host
         "nixos-btw" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = commonSpecialArgs;
@@ -68,7 +65,7 @@
           ];
         };
 
-        # Server configuration
+        # Server host
         server = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = commonSpecialArgs;
@@ -79,7 +76,7 @@
         };
       };
 
-      # Development shell (optional)
+      # DevShell (valgfri)
       devShells = forAllSystems (system:
         let pkgs = nixpkgs.legacyPackages.${system};
         in {
@@ -93,7 +90,7 @@
         }
       );
 
-      # Formatter for your nix code (optional)
+      # Formatter (valgfri)
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);
     };
 }
