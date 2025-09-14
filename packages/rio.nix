@@ -1,16 +1,18 @@
 { config, pkgs, lib, ... }:
 
 let
-  cfg = config.home.rio;
+  # Tjek om Home Manager og rio er aktivt
+  hasRio = config ? home && config.home ? rio;
 
-  # Funktion til at generere én TOML-linje pr. indstilling
+  cfg = if hasRio then config.home.rio else { settings = {}; };
+
   renderSetting = name: "${name} = \"${toString cfg.settings.${name}}\"";
 
-  # Kombinerer alle linjer til én streng
   renderSettings = builtins.concatStringsSep "\n" (map renderSetting (builtins.attrNames cfg.settings));
 in
 {
-  home.file.".config/rio/config.toml".text = ''
+  # Generer kun config.toml hvis Home Manager og rio findes
+  home.file.".config/rio/config.toml".text = if hasRio then ''
     ${renderSettings}
-  '';
+  '' else null;
 }
