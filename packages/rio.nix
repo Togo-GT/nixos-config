@@ -1,26 +1,16 @@
-{ config, lib, pkgs, ... }:
-
-with lib;
+{ config, pkgs, lib, ... }:
 
 let
-  cfg = config.programs.rio;
-in {
-  options.programs.rio = {
-    enable = mkEnableOption "Enable Rio terminal emulator";
-    settings = mkOption {
-      type = types.attrsOf types.str;
-      default = {};
-      description = "Configuration options for Rio terminal emulator";
-    };
-  };
+  cfg = config.home.rio;
 
-  config = mkIf cfg.enable {
-    # Installer Rio
-    home.packages = [ pkgs.rio ];
+  # Funktion til at generere én TOML-linje pr. indstilling
+  renderSetting = name: "${name} = \"${toString cfg.settings.${name}}\"";
 
-    # Skriv settings til config fil
-    xdg.configFile."rio/config.toml".text = ''
-      ${builtins.concatMapStringsSep "\n" (name: value: "${name} = \"${value}\"") (builtins.attrNames cfg.settings | map (name: { inherit name; value = cfg.settings.${name}; })) }
-    '';
-  };
+  # Kombinerer alle linjer til én streng
+  renderSettings = builtins.concatStringsSep "\n" (map renderSetting (builtins.attrNames cfg.settings));
+in
+{
+  home.file.".config/rio/config.toml".text = ''
+    ${renderSettings}
+  '';
 }
